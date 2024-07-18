@@ -4,40 +4,53 @@ const rl = require('readline').createInterface({
 });
 
 
-const lineList = [];
+let input = [];
 
-rl.on('line', function (line) {
-    lineList.push(line);
-}).on('close', function () {
-    const [arrLength, K] = lineList[0].split(' ').map((t) => parseInt(t));
-    if (lineList[1] === lineList[2]) {
+rl.on('line', (line) => {
+    input.push(line);
+}).on('close', () => {
+    const N = parseInt(input[0]);
+    const A = input[1].split(' ').map(Number);
+    const B = input[2].split(' ').map(Number);
+
+    if (selectionSortMatches(A, B)) {
         console.log(1);
-        process.exit();
+    } else {
+        console.log(0);
     }
-    const numberArr = lineList[1].split(' ').map((t) => parseInt(t));
-    const numberArr2 = lineList[2];
-
-    let answer = 0;
-
-    for (let i = numberArr.length - 1; 0 < i; i--) {
-        let maxNumberIndex = i;
-        for (let j = 0; j < i; j++) {
-            if (numberArr[maxNumberIndex] < numberArr[j]) {
-                maxNumberIndex = j;
-            }
-        }
-        if (i !== maxNumberIndex) {
-            let temp = numberArr[maxNumberIndex];
-            numberArr[maxNumberIndex] = numberArr[i];
-            numberArr[i] = temp;
-            if (numberArr.join(' ') === numberArr2) {
-                answer = 1;
-                break;
-            }
-        }
-    }
-
-    console.log(answer);
-
     process.exit();
 });
+
+function selectionSortMatches(A, B) {
+    const n = A.length;
+    if (arraysEqual(A, B)) {
+        return true;
+    }
+    for (let last = n - 1; last >= 1; last--) {
+        let maxIdx = 0;
+        for (let i = 1; i <= last; i++) {
+            if (A[i] > A[maxIdx]) {
+                maxIdx = i;
+            }
+        }
+        if (last !== maxIdx) {
+            [A[last], A[maxIdx]] = [A[maxIdx], A[last]];
+        }
+        if (arraysEqual(A, B)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function arraysEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+            return false;
+        }
+    }
+    return true;
+}
